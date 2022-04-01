@@ -109,3 +109,85 @@ To view or edit the code, you will need an code editor or text editor. The popul
 2. Run the command `dotnet run` to have access to the API in Postman or browser.
 
 ---
+## 🛰️ API Documentation
+
+Explore the API endpoints in Postman or a browser. You will not be able to utilize authentication in a browser.
+
+### Using Swagger Documentation
+
+To explore the MessageBoard API with NSwag, launch the project using `dotnet run` with the Terminal or Powershell, and input the following URL into your browser: `http://localhost:5000/swagger`
+
+#### Example Query
+
+```
+https://localhost:5000/api/1.0/messages/?group=Dogs
+```
+
+..........................................................................................
+
+### Message Endpoints
+
+Access specific information on message board posts from various groups and categories
+
+#### HTTP Request
+
+```
+GET /api/1.0/Animals
+POST /api/1.0/Animals
+GET /api/1.0/Animals/{id}
+PUT /api/1.0/Animals/{id}
+DELETE /api/1.0/Animals/{id}
+```
+
+#### Path Parameters
+
+| Parameter |  Type  | Default | Required | Description                                                    |
+| :-------: | :----: | :-----: | :------: | -------------------------------------------------------------- |
+|   Group   | string |  none   |   true   | Return all pets associated with specific group. |
+
+#### Sample JSON Response
+
+```
+{
+"animalId": 1,
+"name": "Peanut",
+"description": "good boy",
+"group": "Dogs"
+}
+
+```
+
+---
+### 🤝 Contributors
+
+ [Riley Shimp](https://www.github.com/rileyshimp) 
+
+---
+
+### ⚖️ License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT). Copyright (C) 2021 Shawn Lunsford. All Rights Reserved.
+
+```
+MIT License
+Copyright (c) 2021 Shawn Lunsford.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+<center><a href="#">Return to Top</a></center>
