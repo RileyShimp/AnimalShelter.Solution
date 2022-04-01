@@ -1,0 +1,125 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using AnimalShelter.Models;
+using Microsoft.AspNetCore.Cors;
+
+namespace AnimalShelter.Controllers
+{
+  [Route("api/1.0/Animals")]
+  [ApiController]
+  [ApiVersion("1.0")]
+  public class AnimalsV1Controller : ControllerBase
+  {
+    private readonly AnimalShelterContext _db;
+    private readonly IUriService uriService;
+
+    public AnimalsV1Controller(AnimalShelterContext db, IUriService uriService)
+    {
+      _db = db;
+      // Pagination
+      this.uriService = uriService;
+    }
+
+    // GET api/Animals
+    [EnableCors("Policy")]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Animal>>> Get([FromQuery] PaginationFilter filter, string group)
+    {
+      var route = Request.Path.Value;
+      var query = _db.Animals.AsQueryable();
+      // Pagination
+      var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+      
+      if (group != null)
+      {
+        query = query.Where(entry => entry.Group == group);
+      }
+
+      var pagedData = await query
+        .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+        .Take(validFilter.PageSize)
+        .ToListAsync();
+      var totalRecords = await _db.Animals.CountAsync();
+
+      return Ok(PaginationHelper.CreatePagedReponse<Animal>(pagedData, validFilter, totalRecords, uriService, route));
+    }
+
+    // POST api/Animals
+    [HttpPost]
+    public async Task<ActionResult<Animal>> Post(Animal animal)
+    {
+      _db.Animals.Add(animal);
+      await _db.SaveChangesAsync();
+
+      return CreatedAtAction(nameof(GetAnimal), new { id = animal.AnimalId }, animal);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Animal>> GetAnimal(int id)
+    {
+        var animal = await _db.Animals.FindAsync(id);
+
+        if (animal == null)
+        {
+            return NotFound();
+        }
+
+        return animal;
+    }
+
+    // PUT: api/Animals/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, Animal animal)
+    {
+      if (id != animal.AnimalId)
+      {
+        return BadRequest();
+      }
+
+      _db.Entry(animal).State = EntityState.Modified;
+
+      try
+      {
+        await _db.SaveChangesAsync();
+      }
+      catch (DbUpdateConcurrencyException)
+      {
+        if (!AnimalExists(id))
+        {
+          return NotFound();
+        }
+        else
+        {
+          throw;
+        }
+      }
+
+      return NoContent();
+    }
+    private bool AnimalExists(int id)
+    {
+      return _db.Animals.Any(e => e.AnimalId == id);
+    }
+
+    // DELETE: api/Animals/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAnimal(int id)
+    {
+      var animal = await _db.Animals.FindAsync(id);
+      if (animal == null)
+      {
+        return NotFound();
+      }
+
+      _db.Animals.Remove(animal);
+      await _db.SaveChangesAsync();
+
+      return NoContent();
+    }
+  }
+}
